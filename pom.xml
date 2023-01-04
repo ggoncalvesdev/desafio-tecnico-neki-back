@@ -16,7 +16,7 @@
 	<description>Desafio Neki</description>
 	<properties>
 		<java.version>11</java.version>
-		<flyway.version>7.15.0</flyway.version>
+		<!-- <flyway.version>7.15.0</flyway.version> -->
 		<modelmapper.version>2.3.0</modelmapper.version>
 	</properties>
 	<dependencies>
@@ -28,11 +28,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
-			<version>${flyway.version}</version>
-		</dependency>
+		<version>${flyway.version}</version>
+		</dependency> -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -90,11 +90,11 @@
 
 	<build>
 		<plugins>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.flywaydb</groupId>
-				<artifactId>flyway-maven-plugin</artifactId>
+			<artifactId>flyway-maven-plugin</artifactId>
 				<version>${flyway.version}</version>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
