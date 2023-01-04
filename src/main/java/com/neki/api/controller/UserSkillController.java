@@ -1,15 +1,18 @@
 package com.neki.api.controller;
 
-import com.neki.domain.dto.UserSkillDTOPut;
-import com.neki.domain.dto.UserSkillDTORequest;
-import com.neki.domain.dto.UserSkillDTOResponse;
+import com.neki.api.assembler.UserSkillInputDisassembler;
+import com.neki.api.assembler.UserSkillModelAssembler;
+import com.neki.api.model.UserSkillModel;
+import com.neki.api.model.input.UserSkillInput;
+import com.neki.domain.exception.NegocioException;
+import com.neki.domain.exception.UserSkillNaoEncontradoException;
 import com.neki.domain.model.UserSkill;
+import com.neki.domain.repository.UserSkillRepository;
 import com.neki.domain.service.UserSkillService;
-import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(value = "/userSkills")
@@ -27,47 +30,65 @@ public class UserSkillController {
   @Autowired
   private UserSkillService userSkillService;
 
-  @GetMapping("/{userSkillId}")
-  public ResponseEntity<UserSkillDTOResponse> findById(
-    @PathVariable Integer userSkillId
-  ) {
-    UserSkill userSkill = userSkillService.findById(userSkillId);
-    return ResponseEntity.ok().body(new UserSkillDTOResponse(userSkill));
-  }
+  @Autowired
+  private UserSkillRepository userSkillRepository;
+
+  @Autowired
+  private UserSkillModelAssembler userSkillModelAssembler;
+
+  @Autowired
+  private UserSkillInputDisassembler userSkillInputDisassembler;
 
   @GetMapping
-  public ResponseEntity<List<UserSkill>> findAll() {
-    List<UserSkill> list = userSkillService.findAll();
-    return ResponseEntity.ok().body(list);
+  public List<UserSkillModel> findAll() {
+    return userSkillModelAssembler.toCollectionModel(
+      userSkillRepository.findAll()
+    );
   }
 
+  // EXCLUIR UserSkillDTOResponse
+  @GetMapping("/{userSkillId}")
+  public UserSkillModel findById(@PathVariable Integer userSkillId) {
+    UserSkill userSkill = userSkillService.buscarOuFalhar(userSkillId);
+    return userSkillModelAssembler.toModel(userSkill);
+  }
+
+  //EXCLUIR UserSkillDTORequest
   @PostMapping
-  public ResponseEntity<Void> create(
-    @RequestBody UserSkillDTORequest userSkillDto
+  @ResponseStatus(HttpStatus.CREATED)
+  public UserSkillModel create(
+    @RequestBody @Valid UserSkillInput userSkillInput
   ) {
-    UserSkill userSkill = userSkillService.insert(userSkillDto);
-    URI uri = ServletUriComponentsBuilder
-      .fromCurrentRequest()
-      .path("/{id}")
-      .buildAndExpand(userSkill.getId())
-      .toUri();
-    return ResponseEntity.created(uri).build();
+    try {
+      UserSkill userSkill = userSkillInputDisassembler.toDomainObject(
+        userSkillInput
+      );
+
+      return userSkillModelAssembler.toModel(userSkillService.save(userSkill));
+    } catch (UserSkillNaoEncontradoException e) {
+      throw new NegocioException(e.getMessage());
+    }
   }
 
   @PutMapping("/{userSkillId}")
-  public ResponseEntity<Void> update(
-    @Valid @RequestBody UserSkillDTOPut objDto,
-    @PathVariable Integer userSkillId
+  public UserSkillModel update(
+    @PathVariable Integer userSkillId,
+    @RequestBody @Valid UserSkillInput userSkillInput
   ) {
-    UserSkill userSkill = userSkillService.fromDTO(objDto);
-    userSkill.setId(userSkillId);
-    userSkill = userSkillService.update(userSkill);
-    return ResponseEntity.noContent().build();
+    UserSkill userSkillAtual = userSkillService.buscarOuFalhar(userSkillId);
+
+    userSkillInputDisassembler.copyToDomainObject(
+      userSkillInput,
+      userSkillAtual
+    );
+    userSkillAtual = userSkillService.save(userSkillAtual);
+
+    return userSkillModelAssembler.toModel(userSkillAtual);
   }
 
   @DeleteMapping("/{userSkillId}")
-  public ResponseEntity<Void> delete(@PathVariable Integer userSkillId) {
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable Integer userSkillId) {
     userSkillService.delete(userSkillId);
-    return ResponseEntity.noContent().build();
   }
 }
