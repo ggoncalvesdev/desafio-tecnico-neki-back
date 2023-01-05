@@ -1,6 +1,6 @@
 package com.neki.api.controller;
 
-import com.neki.domain.dto.CredentialLoginDTO;
+import com.neki.api.model.input.CredentialLoginInput;
 import com.neki.domain.model.Usuario;
 import com.neki.domain.service.UserService;
 import com.neki.domain.service.security.JWTUtil;
@@ -54,13 +54,13 @@ public class AuthController {
 
   @PostMapping("/login")
   public Map<String, Object> loginHandler(
-    @RequestBody CredentialLoginDTO credentialLoginDTO
+    @RequestBody CredentialLoginInput credentialLoginInput
   ) {
     try {
       // Criando o token que sera usado no processo de autenticacao
       UsernamePasswordAuthenticationToken authInputToken = new UsernamePasswordAuthenticationToken(
-        credentialLoginDTO.getLogin(),
-        credentialLoginDTO.getPassword()
+        credentialLoginInput.getLogin(),
+        credentialLoginInput.getPassword()
       );
 
       // Autenticando as credenciais de login
@@ -69,7 +69,7 @@ public class AuthController {
       // Se o processo de autenticacao foi concluido com sucesso - etapa anterior,
       // eh gerado o JWT
 
-      Usuario user = userService.findByLogin(credentialLoginDTO.getLogin());
+      Usuario user = userService.findByLogin(credentialLoginInput.getLogin());
       Usuario usuarioResumido = new Usuario();
       usuarioResumido.setId(user.getId());
       usuarioResumido.setLogin(user.getLogin());

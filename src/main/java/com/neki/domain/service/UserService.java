@@ -1,6 +1,7 @@
 package com.neki.domain.service;
 
 import com.neki.domain.exception.NegocioException;
+import com.neki.domain.exception.UsuarioNaoEncontradoException;
 import com.neki.domain.model.Usuario;
 import com.neki.domain.repository.UserRepository;
 import java.util.List;
@@ -48,135 +49,6 @@ public class UserService {
     return userRepository.save(user);
   }
 
-  /*   @Transactional
-  public Usuario getById(Integer id) {
-	  //pegar dados do user 
-	  Usuario user = userRepository.findById(id).orElse(null);
-	  //filtrar as relações 
-	  Set<Leitura> listaLeituras = user.getLeituras();
-	  Set<Leitura> leituraResumo = new HashSet<>();
-	  for (Leitura leitura : listaLeituras) {
-		  Leitura novaLeitura = new Leitura();
-		  novaLeitura.setIdLeitura(leitura.getIdLeitura());
-		  Livro livro = leitura.getLivros();
-		  livro.setLeituras(null);
-		  novaLeitura.setLivros(livro);
-		  novaLeitura.setStatus(leitura.getStatus());
-		  
-		  Set<Summary> listaSummary = new HashSet<>();
-		  for(Summary summary : leitura.getSummaries()) {
-			  Summary newSummary = new Summary();
-			  newSummary.setComments(summary.getComments());
-			  newSummary.setIdSummary(summary.getIdSummary());
-			  newSummary.setSummary(summary.getSummary());
-			  listaSummary.add(newSummary);
-			  
-		  }
-		  novaLeitura.setSummaries(listaSummary);
-		  leituraResumo.add(novaLeitura);
-	  }
-	  //devolver ususario filtrado
-	  user.setLeituras(leituraResumo);
-    return user;
-  }
- */
-
-  /*  @Transactional
-  public Usuario updateFotoUsuario(
-    Integer usuarioId,
-    MultipartFile file
-) throws IOException {
-      
-    RestTemplate restTemplate = new RestTemplate();
-    String serverUrl = imgBBHostUrl + imgBBHostKey;
-    
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-    
-    MultiValueMap<String, String> fileMap = new LinkedMultiValueMap<>();
-    
-    ContentDisposition contentDisposition = ContentDisposition
-        .builder("form-data")
-        .name("image")
-        .filename(file.getOriginalFilename())
-        .build();
-    
-    fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-    
-    HttpEntity<byte[]> fileEntity = new HttpEntity<>(file.getBytes(), fileMap);
-    
-    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-    body.add("image", fileEntity);
-    
-    HttpEntity<MultiValueMap<String, Object>> requestEntity =
-        new HttpEntity<>(body, headers);
-    
-    ResponseEntity<ImgBBDTO> response = null;
-    ImgBBDTO imgDTO = new ImgBBDTO();
-    Usuario novoUsuario = new Usuario(); 
-    try {
-      response = restTemplate.exchange(
-          serverUrl,
-          HttpMethod.POST,
-          requestEntity,
-          ImgBBDTO.class);
-      
-      imgDTO = response.getBody();
-      System.out.println("ImgBBDTO: " + imgDTO.getData().toString());
-    } catch (HttpClientErrorException e) {
-      e.printStackTrace();
-    }
-    
-    //Converte os dados da editora recebidos no formato String em Entidade
-    //  Coleta os dados da imagem, após upload via API, e armazena na Entidade Editora
-    if(null != imgDTO) {
-      // Usuario usuarioFromJson = convertUsuarioFromStringJson(usuarioTxt);
-      Usuario usuarioFromBd = userRepository.findById(usuarioId).orElse(null);
-      if(usuarioFromBd != null){
-
-        usuarioFromBd.setImagemFileName(imgDTO.getData().getImage().getFilename());
-        usuarioFromBd.setImagemNome(imgDTO.getData().getTitle());
-        usuarioFromBd.setImagemUrl(imgDTO.getData().getUrl());
-        novoUsuario = userRepository.save(usuarioFromBd);
-      }
-    }
-    
-    return novoUsuario;
-  } */
-
-  //   private Usuario convertUsuarioFromStringJson(String usuarioJson) {
-  // 		Usuario usuario = new Usuario();
-
-  // 		try {
-  // //			ObjectMapper objectMapper = new ObjectMapper();
-  // 			ObjectMapper objectMapper = new ObjectMapper()
-  // 					  .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-  // 			objectMapper.registerModule(new JavaTimeModule());
-
-  // 			usuario = objectMapper.readValue(usuarioJson, Usuario.class);
-  // 		} catch (IOException err) {
-  // 			System.out.printf("Ocorreu um erro ao tentar converter a string json para um instância da entidade Editora", err.toString());
-  // 		}
-
-  // 		return usuario;
-  // 	}
-
-  /* @Transactional
-  public Usuario updateUser(Integer id, Usuario user) {
-    Usuario userAtualizado = userRepository.findById(id).orElse(null);
-    if (userAtualizado != null) {
-      userAtualizado.setEmail(user.getEmail());
-      // userAtualizado.setPassword(user.getPassword());
-      userAtualizado.setNome(user.getNome());
-      userAtualizado.setSetor(user.getSetor());
-      userAtualizado.setImagemFileName(null);
-      return userRepository.save(userAtualizado);
-    } else {
-      return null;
-    }
-  }
- */
   @Transactional
   public Boolean deleteUser(Integer id) {
     Usuario user = userRepository.findById(id).orElse(null);
@@ -188,81 +60,13 @@ public class UserService {
     }
   }
 
-  /*  @Transactional
-  public User recuperarSenha(String email) {
-    User user = userRepository.findByEmail(email).orElse(null);
-
-    if (user == null) {
-      //usuario não existe
-    }
-    int n = 6;
-    String AlphaNumericString =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "abcdefghijklmnopqrstuvxyz";
-    StringBuilder sb = new StringBuilder(n);
-
-    for (int i = 0; i < n; i++) {
-      int index = (int) (AlphaNumericString.length() * Math.random());
-
-      sb.append(AlphaNumericString.charAt(index));
-    }
-
-    sb.toString();
-
-    String novaSenha = sb.toString();
-    String encodedPass = passwordEncoder.encode(novaSenha);
-    user.setPassword(encodedPass);
-
-    Usuario usuarioAtualizado = saveUser(user);
-
-    emailService.sendEmail(
-      email,
-      "Aqui está sua nova senha",
-      "Olá " + user.getNome() + " ,uma nova senha foi gerada: " + novaSenha
-    );
-
-    return usuarioAtualizado;
-  } */
-
-  /*  @Transactional
-  public void alterarSenha(
-    Integer usuarioId,
-    String senhaAtual,
-    String novaSenha
-  ) {
-    Usuario user = buscarOuFalhar(usuarioId);
-
-    if (user.senhaNaoCoincideCom(senhaAtual)) {
-      throw new NegocioException(
-        "Senha atual informada não coincide com a senha do usuário."
-      );
-    }
-
-    user.setPassword(novaSenha);
-  } */
-
-  /*  @Transactional
-  public void desassociarGrupo(Integer usuarioId, Long grupoId) {
-    Usuario usuario = buscarOuFalhar(usuarioId);
-    Grupo grupo = cadastroGrupo.buscarOuFalhar(grupoId);
-
-    usuario.removerGrupo(grupo);
-  }
-
-  @Transactional
-  public void associarGrupo(Integer usuarioId, Long grupoId) {
-    Usuario usuario = buscarOuFalhar(usuarioId);
-    Grupo grupo = cadastroGrupo.buscarOuFalhar(grupoId);
-
-    usuario.adicionarGrupo(grupo);
-  } */
-
-  /* public Usuario buscarOuFalhar(Integer usuarioId) {
-    return userRepository
-      .findById(usuarioId)
-      .orElseThrow(() -> new UsuarioNaoEncontradoException(usuarioId));
-  } */
-
   public void detach(Usuario user) {
     manager.detach(user);
+  }
+
+  public Usuario buscarOuFalhar(Integer userId) {
+    return userRepository
+      .findById(userId)
+      .orElseThrow(() -> new UsuarioNaoEncontradoException(userId));
   }
 }

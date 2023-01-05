@@ -1,16 +1,10 @@
 package com.neki.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import lombok.Data;
@@ -24,7 +18,7 @@ public class Skill {
 
   @EqualsAndHashCode.Include
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Integer id;
 
   @Column
@@ -40,13 +34,4 @@ public class Skill {
 
   @Column
   private String imageUrl;
-
-  @JsonIgnore
-  @OneToMany(
-    cascade = CascadeType.ALL,
-    mappedBy = "skill",
-    fetch = FetchType.LAZY
-  )
-  @JsonIgnoreProperties("userSkill")
-  private Set<UserSkill> userSkill;
 }

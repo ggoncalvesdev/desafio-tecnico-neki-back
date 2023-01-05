@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -21,7 +22,7 @@ public class Usuario {
 
   @EqualsAndHashCode.Include
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Integer id;
 
   @Column
@@ -33,7 +34,8 @@ public class Usuario {
   @Column
   private String password;
 
+  @UpdateTimestamp
+  @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
   @Column(name = "last_login_date")
-  @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
   private Date lastLoginDate;
 }

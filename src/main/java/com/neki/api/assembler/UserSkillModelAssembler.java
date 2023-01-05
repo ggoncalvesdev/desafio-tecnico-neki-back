@@ -18,8 +18,8 @@ public class UserSkillModelAssembler {
     return modelMapper.map(userSkill, UserSkillModel.class);
   }
 
-  public List<UserSkillModel> toCollectionModel(List<UserSkill> userSkills) {
-    return userSkills
+  public List<UserSkillModel> toCollectionModel(List<UserSkill> user) {
+    return user
       .stream()
       .map(userSkill -> toModel(userSkill))
       .collect(Collectors.toList());

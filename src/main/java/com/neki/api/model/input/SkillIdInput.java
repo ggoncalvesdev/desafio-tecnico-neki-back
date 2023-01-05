@@ -1,5 +1,6 @@
 package com.neki.api.model.input;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,5 +8,6 @@ import lombok.Setter;
 @Getter
 public class SkillIdInput {
 
+  @ApiModelProperty(example = "1")
   private Integer id;
 }

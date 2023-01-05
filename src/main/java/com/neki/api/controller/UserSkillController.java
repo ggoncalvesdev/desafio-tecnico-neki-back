@@ -46,14 +46,18 @@ public class UserSkillController {
     );
   }
 
-  // EXCLUIR UserSkillDTOResponse
   @GetMapping("/{userSkillId}")
   public UserSkillModel findById(@PathVariable Integer userSkillId) {
     UserSkill userSkill = userSkillService.buscarOuFalhar(userSkillId);
     return userSkillModelAssembler.toModel(userSkill);
   }
 
-  //EXCLUIR UserSkillDTORequest
+  @GetMapping("user/{user_id}")
+  public UserSkillModel findByUserId(@PathVariable Integer user_id) {
+    UserSkill userSkill = userSkillService.findBySkillFromUser(user_id);
+    return userSkillModelAssembler.toModel(userSkill);
+  }
+
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public UserSkillModel create(

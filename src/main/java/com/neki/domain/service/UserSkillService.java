@@ -1,11 +1,7 @@
 package com.neki.domain.service;
 
-import com.neki.domain.dto.UserSkillDTOPut;
-import com.neki.domain.dto.UserSkillDTORequest;
 import com.neki.domain.exception.UserSkillNaoEncontradoException;
 import com.neki.domain.model.UserSkill;
-import com.neki.domain.repository.SkillRepository;
-import com.neki.domain.repository.UserRepository;
 import com.neki.domain.repository.UserSkillRepository;
 import java.util.List;
 import java.util.Optional;
@@ -19,12 +15,6 @@ public class UserSkillService {
 
   @Autowired
   private UserSkillRepository userSkillRepository;
-
-  @Autowired
-  private UserRepository userRepository;
-
-  @Autowired
-  private SkillRepository skillRepository;
 
   public UserSkill findById(Integer id) {
     Optional<UserSkill> userSkill = userSkillRepository.findById(id);
@@ -46,14 +36,6 @@ public class UserSkillService {
     return userSkillRepository.save(userSkill);
   }
 
-  public UserSkill insert(UserSkillDTORequest userSkillDTO) {
-    UserSkill userSkill = new UserSkill();
-    userSkill.setUser(userRepository.getById(userSkillDTO.getIdUser()));
-    userSkill.setSkill(skillRepository.getById(userSkillDTO.getIdSkill()));
-    userSkill.setKnowledgeLevel(userSkillDTO.getKnowledgeLevel());
-    return userSkillRepository.save(userSkill);
-  }
-
   public UserSkill update(UserSkill userSkill) {
     UserSkill newUserSkill = findById(userSkill.getId());
     updateData(newUserSkill, userSkill);
@@ -69,13 +51,8 @@ public class UserSkillService {
     userSkillRepository.deleteById(id);
   }
 
-  public UserSkill fromDTO(UserSkillDTOPut userSkillDTO) {
-    return new UserSkill(
-      userSkillDTO.getId(),
-      null,
-      null,
-      userSkillDTO.getKnowledgeLevel()
-    );
+  public UserSkill findBySkillFromUser(Integer user_id) {
+    return userSkillRepository.buscarSkillUsuario(user_id);
   }
 
   public UserSkill buscarOuFalhar(Integer userSkillId) {
