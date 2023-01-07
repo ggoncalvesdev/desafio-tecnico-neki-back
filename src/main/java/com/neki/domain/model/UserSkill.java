@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,13 +20,23 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@SequenceGenerator(
+  name = "generator_user_skilll",
+  sequenceName = "user_skill_seq",
+  initialValue = 1000,
+  allocationSize = 1,
+  schema = "teste_residencia"
+)
 @Entity
 @Table(name = "user_skill", schema = "teste_residencia")
 public class UserSkill {
 
   @EqualsAndHashCode.Include
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @GeneratedValue(
+    strategy = GenerationType.SEQUENCE,
+    generator = "generator_user_skilll"
+  )
   private Integer id;
 
   @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)

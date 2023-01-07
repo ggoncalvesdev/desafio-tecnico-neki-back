@@ -62,6 +62,7 @@ public class AuthController {
         credentialLoginInput.getLogin(),
         credentialLoginInput.getPassword()
       );
+      System.out.println("Usuario logado: " + authInputToken);
 
       // Autenticando as credenciais de login
       authManager.authenticate(authInputToken);
@@ -76,7 +77,7 @@ public class AuthController {
       usuarioResumido.setLastLoginDate(user.getLastLoginDate());
       // Gerando o token JWT a partir dos dados do Usuario
       String token = jwtUtil.generateTokenWithUserData(usuarioResumido);
-
+      System.out.println("Usuario logado: " + usuarioResumido);
       // Responde com o JWT
       return Collections.singletonMap("jwt-token", token);
     } catch (AuthenticationException authExc) {
