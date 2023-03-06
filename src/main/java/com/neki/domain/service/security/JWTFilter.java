@@ -14,8 +14,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-//Classe anotada como Componente. A partir dessa anotacao o Spring gerenciara a instancia desse Bean
-//  e voce podera injeta-lo no codigo, aonde precisar
+/**
+ * Essa classe de filtro é executada para qualquer solicitação recebida
+ * verificando se a solicitação possui um token válido.
+ * Se tiver um token JWT válido,
+ * ela define a autenticação no contexto para especificar que o usuário atual é autenticado.
+ */
 @Component
 public class JWTFilter extends OncePerRequestFilter {
 

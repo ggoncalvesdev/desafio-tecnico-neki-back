@@ -12,8 +12,6 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-//Classe anotada como Componente. A partir dessa anotacao o Spring gerenciara a instancia desse Bean
-//e voce podera injeta-lo no codigo, aonde precisar
 @Component
 public class JWTUtil {
 

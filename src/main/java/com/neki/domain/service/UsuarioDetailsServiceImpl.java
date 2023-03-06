@@ -16,6 +16,9 @@ public class UsuarioDetailsServiceImpl implements UserDetailsService {
   @Autowired
   private UserRepository userRepository;
 
+  /**
+   * Função para coletar os dados do usuário logado
+   */
   @Transactional(readOnly = true)
   @Override
   public UserDetails loadUserByUsername(String userLogin)
