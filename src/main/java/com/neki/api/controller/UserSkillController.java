@@ -1,16 +1,9 @@
 package com.neki.api.controller;
 
-import com.neki.api.assembler.UserSkillInputDisassembler;
-import com.neki.api.assembler.UserSkillModelAssembler;
-import com.neki.api.model.UserSkillModel;
-import com.neki.api.model.input.UserSkillInput;
-import com.neki.domain.exception.NegocioException;
-import com.neki.domain.exception.UserSkillNaoEncontradoException;
-import com.neki.domain.model.UserSkill;
-import com.neki.domain.repository.UserSkillRepository;
-import com.neki.domain.service.UserSkillService;
 import java.util.List;
+
 import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +15,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.neki.api.assembler.UserSkillInputDisassembler;
+import com.neki.api.assembler.UserSkillModelAssembler;
+import com.neki.api.model.UserSkillModel;
+import com.neki.api.model.input.SkillLevelInput;
+import com.neki.api.model.input.UserSkillInput;
+import com.neki.domain.exception.NegocioException;
+import com.neki.domain.exception.UserSkillNaoEncontradoException;
+import com.neki.domain.model.UserSkill;
+import com.neki.domain.repository.UserSkillRepository;
+import com.neki.domain.service.UserSkillService;
 
 @RestController
 @RequestMapping(value = "/userSkills")
@@ -83,6 +87,22 @@ public class UserSkillController {
 
     userSkillInputDisassembler.copyToDomainObject(
       userSkillInput,
+      userSkillAtual
+    );
+    userSkillAtual = userSkillService.save(userSkillAtual);
+
+    return userSkillModelAssembler.toModel(userSkillAtual);
+  }
+
+  @PutMapping("level/{userSkillId}")
+  public UserSkillModel updateLevel(
+    @PathVariable Integer userSkillId,
+    @RequestBody @Valid SkillLevelInput skillLevelInput
+  ) {
+    UserSkill userSkillAtual = userSkillService.buscarOuFalhar(userSkillId);
+
+    userSkillInputDisassembler.copyToDomainObject(
+      skillLevelInput,
       userSkillAtual
     );
     userSkillAtual = userSkillService.save(userSkillAtual);
