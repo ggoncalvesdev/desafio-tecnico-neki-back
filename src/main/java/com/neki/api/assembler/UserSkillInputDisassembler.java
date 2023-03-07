@@ -1,10 +1,12 @@
 package com.neki.api.assembler;
 
-import com.neki.api.model.input.UserSkillInput;
-import com.neki.domain.model.UserSkill;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.neki.api.model.input.SkillLevelInput;
+import com.neki.api.model.input.UserSkillInput;
+import com.neki.domain.model.UserSkill;
 
 @Component
 public class UserSkillInputDisassembler {
@@ -21,5 +23,12 @@ public class UserSkillInputDisassembler {
     UserSkill userSkill
   ) {
     modelMapper.map(userSkillInput, userSkill);
+  }
+  
+  public void copyToDomainObject(
+    SkillLevelInput skillLevelInput,
+    UserSkill userSkill
+    ) {
+    modelMapper.map(skillLevelInput, userSkill);
   }
 }

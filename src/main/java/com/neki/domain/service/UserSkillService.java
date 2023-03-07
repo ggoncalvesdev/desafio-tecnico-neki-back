@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserSkillService {
 
+  private static final String MSG_SKILL_NAO_ENCONTRADA =
+  "Não foi possível encontrar a skill do tipo: ";
+
   @Autowired
   private UserSkillRepository userSkillRepository;
 
@@ -20,7 +23,7 @@ public class UserSkillService {
     Optional<UserSkill> userSkill = userSkillRepository.findById(id);
     return userSkill.orElseThrow(() ->
       new ObjectNotFoundException(
-        "Não foi possível encontrar a skill do tipo: " +
+        MSG_SKILL_NAO_ENCONTRADA +
         UserSkill.class.getName(),
         null
       )

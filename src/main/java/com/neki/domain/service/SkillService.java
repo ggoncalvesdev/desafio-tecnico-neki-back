@@ -7,7 +7,6 @@ import com.neki.domain.repository.SkillRepository;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,20 +15,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class SkillService {
 
-  private static final String MSG_SKILL_EM_USO =
-    "Skill de código %d não pode ser removida, pois está em uso";
+  private static final String MSG_SKILL_EM_USO = "Skill de código %d não pode ser removida, pois está em uso";
 
   @Autowired
   private SkillRepository skillRepository;
 
-  public Skill findById(Integer id) {
-    Optional<Skill> obj = skillRepository.findById(id);
-    return obj.orElseThrow(() ->
-      new ObjectNotFoundException(
-        "Não foi possível encontrar a skill do tipo: " + Skill.class.getName(),
-        null
-      )
-    );
+  public Skill findById(Integer skillId) {
+    Optional<Skill> obj = skillRepository.findById(skillId);
+    return obj.orElseThrow(() -> new SkillNaoEncontradaException(skillId));
   }
 
   public List<Skill> findAll() {
@@ -49,15 +42,11 @@ public class SkillService {
     } catch (EmptyResultDataAccessException e) {
       throw new SkillNaoEncontradaException(skillId);
     } catch (DataIntegrityViolationException e) {
-      throw new EntidadeEmUsoException(
-        String.format(MSG_SKILL_EM_USO, skillId)
-      );
+      throw new EntidadeEmUsoException(String.format(MSG_SKILL_EM_USO, skillId));
     }
   }
 
   public Skill buscarOuFalhar(Integer skillId) {
-    return skillRepository
-      .findById(skillId)
-      .orElseThrow(() -> new SkillNaoEncontradaException(skillId));
+    return skillRepository.findById(skillId).orElseThrow(() -> new SkillNaoEncontradaException(skillId));
   }
 }
